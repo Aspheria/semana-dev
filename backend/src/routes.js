@@ -1,32 +1,24 @@
 const express = require('express');
-const crypto = require('crypto');
 
-const connection = require('./database/connection')
+const OngController = require('./controllers/OngController');
+const IncidentController = require("./controllers/IncidentController");
+const ProfileController = require("./controllers/ProfileController");
+const SessionController = require("./controllers/SessionController");
+
 
 const routes = express.Router();
 
-routes.get('/ongs', async (request, response) =>{
-    const ongs = await connection('ongs').select('*');
+routes.get('/ongs', OngController.index);
+routes.post('/ongs', OngController.create);
 
-    return response.json(ongs);
-});
+routes.get("/profile", ProfileController.index);
 
-routes.post('/ongs', async (request, response) => {
-    const {name, email, whatsapp, city, uf} = request.body;
-console.log(name);
-    const id = crypto.randomBytes(4).toString('HEX');
+routes.post("/sessions", SessionController.create);
 
-    await connection('ongs').insert({
-        id,
-        name,
-        email,
-        whatsapp,
-        city,
-        uf,
-    })
+routes.get("/incidents", IncidentController.index);
+routes.post("/incidents", IncidentController.create);
+routes.delete('/incidents:/id', IncidentController.delete )
 
-    return response.json({ id });
-});
 
 //assim se exporta uma variavel de dentro de um file
 module.exports = routes;
